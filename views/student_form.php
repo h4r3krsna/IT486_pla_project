@@ -9,13 +9,10 @@
 
         #wrapper
         {
-            width:500px;
-            height:500px;
+            /*width: 800px;*/
             margin:0 auto;
             background:#f7f7f7;
-            position:absolute;
             left:50%;
-            top:50%;
             margin-left:-250px;
             margin-top:-250px;
         }
@@ -27,7 +24,7 @@
         <h1>Prior Learning Assessment Request Form</h1>
 
         <div id="wrapper">
-            <form action="/" method="POST">
+            <form action="" method="POST">
                 <div class="form-group">
                     <label for="username">Student ID#:</label>
                     <input type="text" class="form-control" id="student-id" name="student-id" placeholder="XXXXXXXXX" required>
