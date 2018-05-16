@@ -9,10 +9,11 @@
 
         #wrapper
         {
-            /*width: 800px;*/
+            width: 800px;
             margin:0 auto;
             background:#f7f7f7;
             left:50%;
+            top:25%;
             margin-left:-250px;
             margin-top:-250px;
         }
