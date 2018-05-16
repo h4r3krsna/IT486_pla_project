@@ -9,11 +9,13 @@
 
         #wrapper
         {
-            width: 800px;
+            width:500px;
+            height:500px;
             margin:0 auto;
             background:#f7f7f7;
+            position:absolute;
             left:50%;
-            top:25%;
+            top:50%;
             margin-left:-250px;
             margin-top:-250px;
         }
