@@ -25,7 +25,7 @@ $f3->route('POST /',
         // return a confirmation
         echo 'Thank you for your submission!';
         ln();
-        echo $_POST;
+        print_r($_POST);
 
         //} else { return ERRORS; }
     }
