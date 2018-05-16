@@ -36,7 +36,7 @@
                     <label for="last-name">Last Name:</label>
                     <input type="text" class="form-control" id="last-name" name="last-name" placeholder="" required>
                     <label for="email">Email:</label>
-                    <input type="text" class="form-control" id="first-name" name="first-name" placeholder="" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="" required>
 
                 </div>
                 <div class="form-group">
