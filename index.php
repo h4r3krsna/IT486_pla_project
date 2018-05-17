@@ -143,26 +143,25 @@ $f3->route('GET /entries/@id',
 
             $result = $dbConnection->query($statement);
             $row = $result->fetch_assoc();
-            var_dump($row);
-            ln();
-            print_r($row);
 
-            $f3->set("student-id", $row['studentid']);
-            $f3->set("first-name", $row['firstname']);
-            $f3->set("last-name", $row['lastname']);
-            $f3->set("student-email", $row['email']);
-            $f3->set("internship-title", $row['internshiptitle']);
-            $f3->set("company", $row['company']);
-            $f3->set("start-date", $row['startdate']);
-            $f3->set("end-date", $row['enddate']);
-            $f3->set("hours-worked", $row['hoursworked']);
-            $f3->set("supervisor-name", $row['supervisorname']);
-            $f3->set("supervisor-title", $row['supervisortitle']);
-            $f3->set("supervisor-email", $row['supervisoremail']);
-            $f3->set("supervisor-phone", $row['supervisorphone']);
-            $f3->set("duties-description", $row['descriptionofduties']);
+            if ($row != NULL) {
+                $f3->set("studentid", $row['studentid']);
+                $f3->set("firstname", $row['firstname']);
+                $f3->set("lastname", $row['lastname']);
+                $f3->set("studentemail", $row['email']);
+                $f3->set("internshiptitle", $row['internshiptitle']);
+                $f3->set("company", $row['company']);
+                $f3->set("startdate", $row['startdate']);
+                $f3->set("enddate", $row['enddate']);
+                $f3->set("hoursworked", $row['hoursworked']);
+                $f3->set("supervisorname", $row['supervisorname']);
+                $f3->set("supervisortitle", $row['supervisortitle']);
+                $f3->set("supervisoremail", $row['supervisoremail']);
+                $f3->set("supervisorphone", $row['supervisorphone']);
+                $f3->set("dutiesdescription", $row['descriptionofduties']);
 
-            echo View::instance()->render('approval_form.php');
+                echo View::instance()->render('approval_form.php');
+            }
 
             // if record found, show form with filled fields
             // else show
