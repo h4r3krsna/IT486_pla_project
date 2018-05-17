@@ -1,4 +1,11 @@
 {
+    "name": "msreedaran/plaform",
+    "authors": [
+        {
+            "name": "Manjunath Sreedaran",
+            "email": "manju.sreedaran@gmail.com"
+        }
+    ],
     "require": {
         "bcosca/fatfree": "^3.6"
     }
