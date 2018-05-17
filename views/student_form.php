@@ -68,7 +68,7 @@
                     <fieldset>
                         <legend>Description of Duties</legend>
                         <!--<label for="duties-description">Description of Duties:</label>-->
-                        <textarea class="form-control" id="duties-description" name="duties-description" rows="8" required></textarea>
+                        <textarea class="form-control" id="duties-description" name="duties-description" rows="11" required></textarea>
                     </fieldset>
                 </div>
             </div>
@@ -84,7 +84,8 @@
     }
 
     function isValidEmail(input) {
-
+        var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        return re.test(input);
     }
 
     function isValidDate(input) {
