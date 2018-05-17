@@ -160,7 +160,7 @@ $f3->route('GET /entries/@id',
                 $f3->set("supervisorphone", $row['supervisorphone']);
                 $f3->set("dutiesdescription", $row['descriptionofduties']);
 
-                echo View::instance()->render('approval_form.php');
+                echo View::instance()->render('views/approval_form.php');
             }
 
             // if record found, show form with filled fields
