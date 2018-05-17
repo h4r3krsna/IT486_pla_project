@@ -49,18 +49,16 @@ $f3->route('GET /',
 
 $f3->route('POST /',
     function($f3) {
-        print_r($_POST);
-        ln();
+//        print_r($_POST);
+//        ln();
 
-        foreach($_POST as $key => $value)
-        {
+//        foreach($_POST as $key => $value)
+//        {
 //            print_r($value . ' : ' . gettype($value));
 //            ln();
-        }
+//        }
 
         if (isValidForm($_POST)) {
-
-            // validate, sanitize and save to DB
             $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
                 "msreedar_plaform", //$this->f3->get("dbuser"),
                 "plaform",//$this->f3->get("dbpassword"),
@@ -85,8 +83,10 @@ $f3->route('POST /',
             $supervisorPhone = $dbConnection->escape_string($_POST["supervisor-phone"]);
             $dutiesDescription = $dbConnection->escape_string($_POST["duties-description"]);
 
-            // how to get id of last insert https://www.w3schools.com/php/php_mysql_insert_lastid.asp
-            $statement = "INSERT INTO entries (studentid, firstname, lastname, email, internshiptitle, company, startdate,enddate,hoursworked,supervisorname,supervisortitle, supervisoremail,supervisorphone, descriptionofduties) VALUES ("
+            $statement = "INSERT INTO entries (studentid, firstname, lastname, email,"
+                         . " internshiptitle, company, startdate,enddate,hoursworked,"
+                         . "supervisorname,supervisortitle, supervisoremail,supervisorphone,"
+                         . "descriptionofduties) VALUES ("
                          . "'" . $studentId . "',"
                          . "'" . $firstName . "',"
                          . "'" . $lastName . "',"
@@ -102,7 +102,7 @@ $f3->route('POST /',
                          . "'" . $supervisorPhone . "', "
                          . "'" . $dutiesDescription . "'"
                          . ")";
-            echo $statement;
+//            echo $statement;
 
             $entryID = '';
             if ($dbConnection->query($statement) === TRUE) {
@@ -115,13 +115,11 @@ $f3->route('POST /',
 
             $dbConnection->close();
 
-            echo 'Thank you for your submission!';// . 'Your entry ID is: ' . $entryID;
-
-            // ln(); echo '<a href="http://msreedaran.greenrivertech.net/plaform/entries/1
-
-            // TODO: email the instructor with a link to the entry & return a confirmation to the student
             $message = "<a href=\"http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID . "\">Click Here</a> to see the details of the form submission.";
             mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $message);
+
+            echo 'Thank you for your submission!'; ln();
+            echo $message;
         } else {
             echo "INVALID FORM SUBMISSION DATA";
         }
@@ -131,11 +129,47 @@ $f3->route('POST /',
 $f3->route('GET /entries/@id',
     function($f3, $params) {
         $entryId = $params['id'];
-        $stmt = 'SELECT * FROM entries WHERE id=' . $entryId;
-        echo $stmt;
+        if (is_int($entryId)) {
+            $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
 
-        // if record found, show form with filled fields
-        // else show
+            $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
+                "msreedar_plaform", //$this->f3->get("dbuser"),
+                "plaform",//$this->f3->get("dbpassword"),
+                "msreedar_plaform");//$this->f3->get("databasename"));
+            if ($dbConnection->connect_errno) {
+                printf("DB connection failed: %s\n", $dbConnection->connect_error);
+                exit();
+            }
+
+            $result = $dbConnection->query($statement);
+            $row = $result->fetch_assoc();
+            var_dump($row);
+            ln();
+            print_r($row);
+
+            $f3->set("student-id", $row['studentid']);
+            $f3->set("first-name", $row['firstname']);
+            $f3->set("last-name", $row['lastname']);
+            $f3->set("student-email", $row['email']);
+            $f3->set("internship-title", $row['internshiptitle']);
+            $f3->set("company", $row['company']);
+            $f3->set("start-date", $row['startdate']);
+            $f3->set("end-date", $row['enddate']);
+            $f3->set("hours-worked", $row['hoursworked']);
+            $f3->set("supervisor-name", $row['supervisorname']);
+            $f3->set("supervisor-title", $row['supervisortitle']);
+            $f3->set("supervisor-email", $row['supervisoremail']);
+            $f3->set("supervisor-phone", $row['supervisorphone']);
+            $f3->set("duties-description", $row['descriptionofduties']);
+
+            echo View::instance()->render('approval_form.php');
+
+            // if record found, show form with filled fields
+            // else show
+
+            // if role = intructor, show approve button
+            // if ($params['role'] === "instructor") ...
+        }
     });
 
 $f3->run();
