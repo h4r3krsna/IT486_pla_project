@@ -55,6 +55,7 @@ $f3->route('POST /',
         foreach($_POST as $key => $value)
         {
             print_r($value . ' : ' . gettype($value));
+            ln();
 //            if (strstr($key, 'item'))
 //            {
 //                $x = str_replace('item','',$key);
