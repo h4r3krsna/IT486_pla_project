@@ -7,37 +7,23 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
 
-        #wrapper
-        {
-            width:500px;
-            height:500px;
-            margin:0 auto;
-            background:#f7f7f7;
-            position:absolute;
-            left:50%;
-            top:50%;
-            margin-left:-250px;
-            margin-top:-250px;
-        }
     </style>
 </head>
 <body>
 <div class="container">
     <article>
         <h1>Prior Learning Assessment Request Form</h1>
-
         <div id="wrapper">
-            <form action="" method="POST">
+            <form id="plaform" name="plaform" action="" onsubmit="return validateForm()" method="POST">
                 <div class="form-group">
-                    <label for="username">Student ID#:</label>
+                    <label for="student-id">Student ID#:</label>
                     <input type="text" class="form-control" id="student-id" name="student-id" placeholder="XXXXXXXXX" required>
                     <label for="first-name">First Name:</label>
                     <input type="text" class="form-control" id="first-name" name="first-name" placeholder="" required>
                     <label for="last-name">Last Name:</label>
                     <input type="text" class="form-control" id="last-name" name="last-name" placeholder="" required>
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="" required>
-
+                    <label for="student-email">Email:</label>
+                    <input type="email" class="form-control" id="student-email" name="student-email" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="internship-title">Internship Title:</label>
@@ -45,9 +31,9 @@
                     <label for="company">Company:</label>
                     <input type="text" class="form-control" id="company" name="company" placeholder="" required>
                     <label for="start-date">Start Date:</label>
-                    <input type="text" class="form-control" id="start-date" name="start-date" placeholder="" required>
+                    <input type="text" class="form-control" id="start-date" name="start-date" placeholder="YYYY-MM-DD" required>
                     <label for="end-date">End Date:</label>
-                    <input type="text" class="form-control" id="end-date" name="end-date" placeholder="" required>
+                    <input type="text" class="form-control" id="end-date" name="end-date" placeholder="YYYY-MM-DD" required>
                     <label for="hours-worked">Hours Worked:</label>
                     <input type="text" class="form-control" id="hours-worked" name="hours-worked" placeholder="" required>
                 </div>
@@ -57,25 +43,26 @@
                     <label for="supervisor-title">Supervisor Title:</label>
                     <input type="text" class="form-control" id="supervisor-title" name="supervisor-title" placeholder="" required>
                     <label for="supervisor-email">Supervisor Email:</label>
-                    <input type="text" class="form-control" id="supervisor-email" name="supervisor-email" placeholder="" required>
+                    <input type="email" class="form-control" id="supervisor-email" name="supervisor-email" placeholder="" required>
                     <label for="supervisor-phone">Supervisor Phone:</label>
-                    <input type="text" class="form-control" id="supervisor-phone" name="supervisor-phone" placeholder="" required>
+                    <input type="text" class="form-control" id="supervisor-phone" name="supervisor-phone" placeholder="XXX-XXX-XXXX" required>
                 </div>
                 <div class="form-group">
                     <label for="duties-description">Description of Duties:</label>
-                    <textarea class="form-control" id="duties-description" name="duties-description" required></textarea>
+                    <textarea class="form-control" id="duties-description" name="duties-description" rows="8" required></textarea>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Submit">
+                <input type="submit" class="btn btn-primary pull-right" value="Submit">
             </form>
         </div>
     </article>
 </div>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!--
 <script>
-
+    function validateForm() {
+        alert('validation stub');
+        return false;
+    }
 </script>
--->
 </body>
 </html>
