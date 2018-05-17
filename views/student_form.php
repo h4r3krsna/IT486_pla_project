@@ -61,7 +61,7 @@
 <script>
     function validateForm() {
         alert('validation stub');
-        return false;
+        return true;
     }
 </script>
 </body>
