@@ -129,7 +129,7 @@ $f3->route('POST /',
 $f3->route('GET /entries/@id',
     function($f3, $params) {
         $entryId = $params['id'];
-        if (is_int($entryId)) {
+        if (intval($entryId) > 0) {
             $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
 
             $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
