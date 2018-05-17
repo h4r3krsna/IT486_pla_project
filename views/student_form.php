@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prior Learning Assessment Request Form - Green River College</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
-
+        .form-group {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -67,7 +70,6 @@
                 <div class="form-group">
                     <fieldset>
                         <legend>Description of Duties</legend>
-                        <!--<label for="duties-description">Description of Duties:</label>-->
                         <textarea class="form-control" id="duties-description" name="duties-description" rows="11" required></textarea>
                     </fieldset>
                 </div>
