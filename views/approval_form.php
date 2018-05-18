@@ -18,7 +18,7 @@ $f3 = \Base::instance();
 <body>
 <div class="container">
     <h1>Prior Learning Assessment Request Form</h1>
-    <form id="plaform" name="plaform" action="" onsubmit="return validateForm()" method="POST">
+    <form id="plaform" name="plaform" action="#">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                 <div class="form-group">
