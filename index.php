@@ -140,9 +140,9 @@ $f3->route('POST /',
 
 
         $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
-            "msreedar_plaform", //$this->f3->get("dbuser"),
+            "request_plaform", //$this->f3->get("dbuser"),
             "plaform",//$this->f3->get("dbpassword"),
-            "msreedar_plaform");//$this->f3->get("databasename"));
+            "request_plaform");//$this->f3->get("databasename"));
         if ($dbConnection->connect_errno) {
             printf("DB connection failed: %s\n", $dbConnection->connect_error);
             exit();
@@ -199,10 +199,10 @@ $f3->route('POST /',
         $entryID = '';
         if ($dbConnection->query($statement) === TRUE) {
             $entryID = $dbConnection->insert_id;
-            $entryURL = "http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID;
-            $message = "Visit http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID . " to see the details of the form submission.";
+            $entryURL = "http://request.greenrivertech.net/entries/" . $entryID;
+            $message = "Visit http://request.greenrivertech.net/entries/" . $entryID . " to see the details of the form submission.";
             mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $message);
-            mail($studentEmail, "Prior Learning Assessment Request Form Submission", $message);
+            mail($_POST['student-email'], "Prior Learning Assessment Request Form Submission", $message);
 
             echo 'Thank you for your submission!'; ln();
             echo "<a href=\"" . $entryURL . "\">Click Here</a> to see the details of the form submission.";
@@ -223,9 +223,9 @@ $f3->route('GET /entries/@id',
             $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
 
             $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
-                "msreedar_plaform", //$this->f3->get("dbuser"),
+                "request_plaform", //$this->f3->get("dbuser"),
                 "plaform",//$this->f3->get("dbpassword"),
-                "msreedar_plaform");//$this->f3->get("databasename"));
+                "request_plaform");//$this->f3->get("databasename"));
             if ($dbConnection->connect_errno) {
                 printf("DB connection failed: %s\n", $dbConnection->connect_error);
                 exit();
