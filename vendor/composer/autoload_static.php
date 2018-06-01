@@ -10,9 +10,14 @@ class ComposerStaticInit8350607fdaab627ef09cde2d7dcd833e
         '45e8c92354af155465588409ef796dbc' => __DIR__ . '/..' . '/bcosca/fatfree/lib/base.php',
     );
 
+    public static $classMap = array (
+        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->classMap = ComposerStaticInit8350607fdaab627ef09cde2d7dcd833e::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -6,39 +6,112 @@ function ln() {
     echo '<br>';
 }
 
-function isValidStudentID($input) {
+function isValidStudentID(&$postData) {
+    $studentId = $postData['student-id'];
     $matches = '';
-    preg_match('/[0-9]{9}/', $input,$matches);
-    return (strlen($input) == 9) && (sizeof($matches) == 1);
+    preg_match('/[0-9]{9}/', $studentId,$matches);
+
+    $result = (strlen($studentId) == 9) && (sizeof($matches) == 1);
+
+    $postData['ok-student-id'] = $result;
+    return $result;
 }
 
-function isValidEmail($input) {
+function isFilled(&$postData, $fieldName) {
+    $result = strlen($postData[$fieldName]) > 0;
 
+    $postData['ok-' . $fieldName] = $result;
+    return result;
 }
 
-function isValidDate($input) {
+function isValidEmail(&$postData, $fieldName) {
+    $email = $postData[$fieldName];
+
+    $result = strlen(filter_var($email, FILTER_VALIDATE_EMAIL)) > 0;
+
+    $postData['ok-' . $fieldName] = $result;
+    return $result;
+}
+
+function isValidDate(&$postData, $fieldName) {
+    $date = $postData[$fieldName];
     $matches = '';
-    preg_match('/[0-9]{4}-[01][0-9]-[0-3][0-9]/', $input, $matches);
-    return (strlen($input) == 10) && (sizeof($matches) == 1);
+    preg_match('/[0-9]{4}-[01][0-9]-[0-3][0-9]/', $date, $matches);
+
+    $result = (strlen($date) == 10) && (sizeof($matches) == 1);
+
+    $postData['ok-' . $fieldName] = $result;
+    return $result;
 }
 
-function isValidPhone($input) {
+function isStartDateBeforeEndDate(&$postData) {
+    $startDate = date_create($postData['start-date']);
+    $endDate = date_create($postData['end-date']);
 
+    $result = !(date_diff($startDate, $endDate)->format("%R%a") < 0);
+
+    $postData['ok-dates'] = $result;
+    return $result;
 }
 
-function isValidForm($postData) {
+function isNumeric(&$postData, $fieldName) {
+    $result = is_numeric($postData[$fieldName]);
+
+    $postData['ok-' . $fieldName] = $result;
+    return $result;
+}
+
+function isValidPhone(&$postData, $fieldName) { // TODO: validate
+    $phoneNumber = $postData[$fieldName];
+    $matches = '';
+    preg_match('/[0-9]{10}/', $phoneNumber, $matches);
+
+    $result = strlen($phoneNumber) == 10 && (sizeof($matches) == 1);
+
+    $postData['ok-' . $fieldName] = $result;
+    return $result;
+}
+
+function isValidForm(&$postData) {
   $isValidForm = true;
 
-//  foreach($postData as $key => $value) {
-//    $isValidForm = $isValidForm &&
-//  }
+  // split into individual statements so that all validators will be executed instead of
+  // being shortcircuited
+
+  $isValidForm = isValidStudentID($postData) && $isValidForm;
+  $isValidForm = isFilled($postData, 'first-name') && $isValidForm;
+  $isValidForm = isFilled($postData, 'last-name') && $isValidForm;
+  $isValidForm = isValidEmail($postData, 'student-email') && $isValidForm;
+  $isValidForm = isFilled($postData, 'internship-title') && $isValidForm;
+  $isValidForm = isFilled($postData, 'company') && $isValidForm;
+  $isValidForm = isValidDate($postData, 'start-date') && $isValidForm;
+  $isValidForm = isValidDate($postData, 'end-date') && $isValidForm;
+  $isValidForm = isStartDateBeforeEndDate($postData) && $isValidForm;
+  $isValidForm = isNumeric($postData, 'hours-worked') && $isValidForm;
+  $isValidForm = isFilled($postData, 'supervisor-name') && $isValidForm;
+  $isValidForm = isFilled($postData, 'supervisor-title') && $isValidForm;
+  $isValidForm = isValidEmail($postData, 'supervisor-email') && $isValidForm;
+  $isValidForm = isValidPhone($postData, 'supervisor-phone') && $isValidForm;
+  $isValidForm = isFilled($postData, 'duties-description') && $isValidForm;
+  $isValidForm = isFilled($postData, 'reflection0') && $isValidForm;
+  $isValidForm = isFilled($postData, 'reflection1') && $isValidForm;
+  $isValidForm = isFilled($postData, 'reflection2') && $isValidForm;
+  $isValidForm = isFilled($postData, 'reflection3') && $isValidForm;
+  $isValidForm = isFilled($postData, 'reflection4') && $isValidForm;
 
   return $isValidForm;
 }
 
 $f3 = \Base::instance();
 
+$f3->set('DEBUG', 5);
+
 $f3->set("instructorEmail", "msreedaran@mail.greenriver.edu");
+
+$f3->route('GET /test/foo',
+    function() {
+        echo "test";
+});
 
 $f3->route('GET /',
   function() {
@@ -58,71 +131,88 @@ $f3->route('POST /',
 //            ln();
 //        }
 
-        if (isValidForm($_POST)) {
-            $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
-                "msreedar_plaform", //$this->f3->get("dbuser"),
-                "plaform",//$this->f3->get("dbpassword"),
-                "msreedar_plaform");//$this->f3->get("databasename"));
-            if ($dbConnection->connect_errno) {
-                printf("DB connection failed: %s\n", $dbConnection->connect_error);
-                exit();
-            }
+        if (!isValidForm($_POST)) {
+            // set POST variables for bad fields
+            // render a variant of student_form.php that will later be merged into student_form.php
+            echo View::instance()->render('views/student_form_invalid.php');
+            return;
+        }
 
-            $studentId = $dbConnection->escape_string($_POST["student-id"]);
-            $firstName = $dbConnection->escape_string($_POST["first-name"]);
-            $lastName = $dbConnection->escape_string($_POST["last-name"]);
-            $studentEmail = $dbConnection->escape_string($_POST["student-email"]);
-            $internshipTitle = $dbConnection->escape_string($_POST["internship-title"]);
-            $company = $dbConnection->escape_string($_POST["company"]);
-            $startDate = $dbConnection->escape_string($_POST["start-date"]);
-            $endDate = $dbConnection->escape_string($_POST["end-date"]);
-            $hoursWorked = $dbConnection->escape_string($_POST["hours-worked"]);
-            $supervisorName = $dbConnection->escape_string($_POST["supervisor-name"]);
-            $supervisorTitle = $dbConnection->escape_string($_POST["supervisor-title"]);
-            $supervisorEmail = $dbConnection->escape_string($_POST["supervisor-email"]);
-            $supervisorPhone = $dbConnection->escape_string($_POST["supervisor-phone"]);
-            $dutiesDescription = $dbConnection->escape_string($_POST["duties-description"]);
 
-            $statement = "INSERT INTO entries (studentid, firstname, lastname, email,"
-                         . " internshiptitle, company, startdate,enddate,hoursworked,"
-                         . "supervisorname,supervisortitle, supervisoremail,supervisorphone,"
-                         . "descriptionofduties) VALUES ("
-                         . "'" . $studentId . "',"
-                         . "'" . $firstName . "',"
-                         . "'" . $lastName . "',"
-                         . "'" . $studentEmail . "', "
-                         . "'" . $internshipTitle . "', "
-                         . "'" . $company . "', "
-                         . "'" . $startDate . "', "
-                         . "'" . $endDate . "', "
-                         . $hoursWorked . ", "
-                         . "'" . $supervisorName . "', "
-                         . "'" . $supervisorTitle . "', "
-                         . "'" . $supervisorEmail . "', "
-                         . "'" . $supervisorPhone . "', "
-                         . "'" . $dutiesDescription . "'"
-                         . ")";
+        $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
+            "msreedar_plaform", //$this->f3->get("dbuser"),
+            "plaform",//$this->f3->get("dbpassword"),
+            "msreedar_plaform");//$this->f3->get("databasename"));
+        if ($dbConnection->connect_errno) {
+            printf("DB connection failed: %s\n", $dbConnection->connect_error);
+            exit();
+        }
+
+        $studentId = $dbConnection->escape_string($_POST["student-id"]);
+        $firstName = $dbConnection->escape_string($_POST["first-name"]);
+        $lastName = $dbConnection->escape_string($_POST["last-name"]);
+        $studentEmail = $dbConnection->escape_string($_POST["student-email"]);
+        $internshipTitle = $dbConnection->escape_string($_POST["internship-title"]);
+        $company = $dbConnection->escape_string($_POST["company"]);
+        $startDate = $dbConnection->escape_string($_POST["start-date"]);
+        $endDate = $dbConnection->escape_string($_POST["end-date"]);
+        $hoursWorked = $dbConnection->escape_string($_POST["hours-worked"]);
+        $supervisorName = $dbConnection->escape_string($_POST["supervisor-name"]);
+        $supervisorTitle = $dbConnection->escape_string($_POST["supervisor-title"]);
+        $supervisorEmail = $dbConnection->escape_string($_POST["supervisor-email"]);
+        $supervisorPhone = $dbConnection->escape_string($_POST["supervisor-phone"]);
+        $dutiesDescription = $dbConnection->escape_string($_POST["duties-description"]);
+        $reflection0 = $dbConnection->escape_string($_POST["reflection0"]);
+        $reflection1 = $dbConnection->escape_string($_POST["reflection1"]);
+        $reflection2 = $dbConnection->escape_string($_POST["reflection2"]);
+        $reflection3 = $dbConnection->escape_string($_POST["reflection3"]);
+        $reflection4 = $dbConnection->escape_string($_POST["reflection4"]);
+
+        $statement = "INSERT INTO entries (studentid, firstname, lastname, email,"
+                     . " internshiptitle, company, startdate,enddate,hoursworked,"
+                     . "supervisorname,supervisortitle, supervisoremail,supervisorphone,"
+                     . "descriptionofduties,"
+                     . "reflection0, reflection1, reflection2, reflection3, reflection4)"
+                     . " VALUES ("
+                     . "'" . $studentId . "',"
+                     . "'" . $firstName . "',"
+                     . "'" . $lastName . "',"
+                     . "'" . $studentEmail . "', "
+                     . "'" . $internshipTitle . "', "
+                     . "'" . $company . "', "
+                     . "'" . $startDate . "', "
+                     . "'" . $endDate . "', "
+                     . $hoursWorked . ", "
+                     . "'" . $supervisorName . "', "
+                     . "'" . $supervisorTitle . "', "
+                     . "'" . $supervisorEmail . "', "
+                     . "'" . $supervisorPhone . "', "
+                     . "'" . $dutiesDescription . "', "
+                     . "'" . $reflection0 . "', "
+                     . "'" . $reflection1 . "', "
+                     . "'" . $reflection2 . "', "
+                     . "'" . $reflection3 . "', "
+                     . "'" . $reflection4 . "'"
+                     . ")";
 //            echo $statement;
 
-            $entryID = '';
-            if ($dbConnection->query($statement) === TRUE) {
-                $entryID = $dbConnection->insert_id;
-            } else {
-                echo "Error: " . $statement;
-                ln();
-                echo $dbConnection->error;
-            }
-
-            $dbConnection->close();
-
-            $message = "<a href=\"http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID . "\">Click Here</a> to see the details of the form submission.";
+        $entryID = '';
+        if ($dbConnection->query($statement) === TRUE) {
+            $entryID = $dbConnection->insert_id;
+            $entryURL = "http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID;
+            $message = "Visit http://msreedaran.greenrivertech.net/plaform/entries/" . $entryID . " to see the details of the form submission.";
             mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $message);
+            mail($studentEmail, "Prior Learning Assessment Request Form Submission", $message);
 
             echo 'Thank you for your submission!'; ln();
-            echo $message;
+            echo "<a href=\"" . $entryURL . "\">Click Here</a> to see the details of the form submission.";
         } else {
-            echo "INVALID FORM SUBMISSION DATA";
+            echo "Error: " . $statement;
+            ln();
+            echo $dbConnection->error;
         }
+
+        $dbConnection->close();
     }
 );
 
@@ -159,6 +249,11 @@ $f3->route('GET /entries/@id',
                 $f3->set("supervisoremail", $row['supervisoremail']);
                 $f3->set("supervisorphone", $row['supervisorphone']);
                 $f3->set("dutiesdescription", $row['descriptionofduties']);
+                $f3->set("reflection0", $row['reflection0']);
+                $f3->set("reflection1", $row['reflection1']);
+                $f3->set("reflection2", $row['reflection2']);
+                $f3->set("reflection3", $row['reflection3']);
+                $f3->set("reflection4", $row['reflection4']);
 
                 echo View::instance()->render('views/approval_form.php');
             }
@@ -169,7 +264,27 @@ $f3->route('GET /entries/@id',
             // if role = intructor, show approve button
             // if ($params['role'] === "instructor") ...
         }
-    });
+    }
+);
+
+$f3->route('GET /tryfpdf', function() {
+    //echo View::instance()->render('views/tryfpdf.php');
+    $pdf = new FPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(40,10,'Hello World!');
+    $pdf->Output();
+});
+
+$f3->route('GET /foo', function() {
+   echo "foo";
+});
+
+$f3->route('GET /bar',
+    function($f3, $params) {
+        echo "bar";
+    }
+);
 
 $f3->run();
 

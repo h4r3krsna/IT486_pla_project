@@ -13,6 +13,12 @@ $f3 = \Base::instance();
         .form-group {
             margin-top: 20px;
         }
+        .reflection {
+            margin-top: 25px;
+        }
+        body {
+            padding-bottom: 25px;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +80,25 @@ $f3 = \Base::instance();
                     <fieldset>
                         <legend>Description of Duties</legend>
                         <textarea class="form-control" id="duties-description" name="duties-description" rows="11" disabled><?php echo $f3->get("dutiesdescription"); ?></textarea>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <fieldset>
+                        <legend>Additional Questions</legend>
+                        <label for="reflection0">What elements and experiences from your coursework best helped you prepare for your internship experience? Your answer may include technical and non-technical elements.</label>
+                        <textarea class="form-control" id="reflection0" name="reflection0" rows="11" disabled><?php echo $f3->get("reflection0"); ?></textarea>
+                        <label for="reflection1" class="reflection">What did you learn in your internship experience, either directly at work or independently to support your work? Your answer may include technical and non-technical items.</label>
+                        <textarea class="form-control" id="reflection1" name="reflection1" rows="11" disabled><?php echo $f3->get("reflection1"); ?></textarea>
+                        <label for="reflection2" class="reflection">What was your experience with the work environment, company/management culture, and technical/innovation culture? Was it what you expected? And what would you look for in your next work opportunity that is either the same or different from this internship/work experience, from a technical or non-technical perspective?</label>
+                        <textarea class="form-control" id="reflection2" name="reflection2" rows="11" disabled><?php echo $f3->get("reflection2"); ?></textarea>
+                        <label for="reflection3" class="reflection">With your internship experience completed, what do you plan on learning going forward into your next courses and/or next work opportunities?</label>
+                        <textarea class="form-control" id="reflection3" name="reflection3" rows="11" disabled><?php echo $f3->get("reflection3"); ?></textarea>
+                        <label for="reflection4" class="reflection">With your internship experience completed, what would your recommendations/advice be to students who are searching for their first internship and/or are preparing to start their first internship experience?</label>
+                        <textarea class="form-control" id="reflection4" name="reflection4" rows="11" disabled><?php echo $f3->get("reflection4"); ?></textarea>
                     </fieldset>
                 </div>
             </div>
