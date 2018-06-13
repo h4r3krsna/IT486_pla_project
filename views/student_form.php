@@ -105,7 +105,9 @@
                 <div class="form-group">
                     <fieldset>
                         <legend>Description of Duties</legend>
-                        <textarea class="form-control" id="duties-description" name="duties-description" rows="11" required></textarea>
+                        <div class="form-group">
+                            <textarea class="form-control" id="duties-description" name="duties-description" rows="11" required></textarea>
+                        </div>
                     </fieldset>
                 </div>
             </div>
