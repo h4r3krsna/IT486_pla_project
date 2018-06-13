@@ -2,11 +2,15 @@
 require('top.php');
 ?>
 
-<form action="/entries" method="POST">
+<!-- <p style="text-align: center">Please enter your credentials to view entry # {{ @entryId }}</p> -->
+
+<h1 style="text-align: center;">Please enter your credentials</h1>
+
+<form action="" method="POST">
     <div class="row">
         <div class="form-group col-xs-12 col-md-offset-5 col-md-2">
             <label for="username">username:</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="" required>
+            <input type="text" class="form-control" id="username" name="username" placeholder="" autofocus required>
         </div>
         <div class="form-group col-xs-12 col-md-offset-5 col-md-2">
             <label for="password">password:</label>
