@@ -227,12 +227,53 @@ $f3->route('POST /',
         if ($dbConnection->query($statement) === TRUE) {
             $entryID = $dbConnection->insert_id;
             $entryURL = "http://request.greenrivertech.net/entries/" . $entryID;
-            $message = "Visit http://request.greenrivertech.net/entries/" . $entryID . " to see the details of the form submission.";
-            mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $message);
-            mail($_POST['student-email'], "Prior Learning Assessment Request Form Submission", $message);
+            $messageToInstructor = "Visit http://request.greenrivertech.net/entries/" . $entryID . " to see the details of the form submission.";
+            mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $messageToInstructor);
 
-            echo 'Thank you for your submission!'; ln();
-            echo "<a href=\"" . $entryURL . "\">Click Here</a> to see the details of the form submission.";
+            // To send HTML mail, the Content-type header must be set
+            $headers[] = 'MIME-Version: 1.0';
+            $headers[] = 'Content-type: text/html; charset=utf-8';
+
+            // Additional headers
+            $headers[] = 'To: ' . $firstName . ' ' . $lastName . ' <' . $studentEmail . '>';
+//            $headers[] = 'From: Green River P <noreply@greenrivertech.net>';
+            
+            $subject = "Prior Learning Assessment Request Form Submission";
+            
+            $thanks = 'Thank you for your submission!';
+            $messageToStudent = '<html><head><title>' . $subject . '</title></head><body><p>' . $thanks . '<br>';
+            $messageToStudent .= 'Here are the details of your form submission.</p>';
+            $messageToStudent .= '<h3>Personal Identification</h3><p>';
+            $messageToStudent .= 'Student ID#: ' . $studentId . '<br>';
+            $messageToStudent .= 'First Name: ' . $firstName . '<br>';
+            $messageToStudent .= 'Last Name: ' . $lastName . '<br>';
+            $messageToStudent .= 'Student Email: ' . $studentEmail . '<br>';
+            $messageToStudent .= 'Student Phone: ' . $studentPhone . '<br>';
+            $messageToStudent .= '</p><h3>Internship Information</h3><p>';
+            $messageToStudent .= 'Internship Title: ' . $internshipTitle . '<br>';
+            $messageToStudent .= 'Company: ' . $company . '<br>';
+            $messageToStudent .= 'Start Date: ' . $startDate . '<br>';
+            $messageToStudent .= 'End Date: ' . $endDate . '<br>';
+            $messageToStudent .= 'Hours Worked: ' . $hoursWorked . '<br>';
+            $messageToStudent .= '</p><h3>Supervisor Details</h3><p>';
+            $messageToStudent .= 'Supervisor Name: ' . $supervisorName . '<br>';
+            $messageToStudent .= 'Supervisor Title: ' . $supervisorTitle . '<br>';
+            $messageToStudent .= 'Supervisor Email: ' . $supervisorEmail . '<br>';
+            $messageToStudent .= 'Supervisor Phone: ' . $supervisorPhone . '<br>';
+            $messageToStudent .= '</p><p><b>Description of Duties:</b><br>' . $dutiesDescription;
+            $messageToStudent .= '</p><h3>Additional Questions</h3>';
+            $messageToStudent .= '<p><b>What elements and experiences from your coursework best helped you prepare for your internship experience? Your answer may include technical and non-technical elements.</b><br>' . $reflection0 . '</p>';
+            $messageToStudent .= '<p><b>What did you learn in your internship experience, either directly at work or independently to support your work? Your answer may include technical and non-technical items.</b><br>' . $reflection1 . '</p>';
+            $messageToStudent .= '<p><b>What was your experience with the work environment, company/management culture, and technical/innovation culture? Was it what you expected? And what would you look for in your next work opportunity that is either the same or different from this internship/work experience, from a technical or non-technical perspective?</b><br>' . $reflection2 . '</p>';
+            $messageToStudent .= '<p><b>With your internship experience completed, what do you plan on learning going forward into your next courses and/or next work opportunities?</b><br>' . $reflection3 . '</p>';
+            $messageToStudent .= '<p><b>With your internship experience completed, what would your recommendations/advice be to students who are searching for their first internship and/or are preparing to start their first internship experience?</b><br>' . $reflection4 . '\r\n';
+            $messageToStudent .= '</body></html>';
+            mail($_POST['student-email'], $subject, $messageToStudent, implode("\r\n", $headers));
+
+            echo '<span id="confirmation">' . $thanks; ln();
+            echo 'Please check your email for a receipt with the details'; ln();
+            echo 'that you entered in your form submission.</span>';
+            //echo "<a href=\"" . $entryURL . "\">Click Here</a> to see the details of the form submission.";
         } else {
             echo "Error: " . $statement;
             ln();
