@@ -145,6 +145,14 @@ $f3->route('GET /',
   }
 );
 
+$f3->route('GET /trytemplate',
+  function($f3, $params) {
+    $f3->set('trytemplatevar', 'hello');
+    echo Template::instance()->render('views/trytemplate.php');
+    $f3->clear('trytemplatevar');
+  }
+);
+
 $f3->route('POST /',
     function($f3) {
 //        print_r($_POST);
@@ -235,7 +243,7 @@ $f3->route('POST /',
             $headers[] = 'Content-type: text/html; charset=utf-8';
 
             // Additional headers
-            $headers[] = 'To: ' . $firstName . ' ' . $lastName . ' <' . $studentEmail . '>';
+//            $headers[] = 'To: ' . $firstName . ' ' . $lastName . ' <' . $studentEmail . '>';
 //            $headers[] = 'From: Green River P <noreply@greenrivertech.net>';
             
             $subject = "Prior Learning Assessment Request Form Submission";
@@ -284,55 +292,76 @@ $f3->route('POST /',
     }
 );
 
-$f3->route('GET /entries/@id',
-    function($f3, $params) {
-        $entryId = $params['id'];
-        if (intval($entryId) > 0) {
-            $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
+$f3->route('POST /entries/@id',
+    function($f3) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-            $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
-                "request_plaform", //$this->f3->get("dbuser"),
-                "plaform",//$this->f3->get("dbpassword"),
-                "request_plaform");//$this->f3->get("databasename"));
-            if ($dbConnection->connect_errno) {
-                printf("DB connection failed: %s\n", $dbConnection->connect_error);
-                exit();
+        // TODO: create authentication roles in a database table and look up a match
+        if (!(strcmp($username, 'admin') || strcmp($password, 'nimdadrowssap'))) {
+
+            $entryId = $f3->get('PARAMS.id');
+            if (intval($entryId) > 0) {
+                $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
+
+                // TODO: make the credentials configurable outside of this block
+                $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
+                    "request_plaform", //$this->f3->get("dbuser"),
+                    "plaform",//$this->f3->get("dbpassword"),
+                    "request_plaform");//$this->f3->get("databasename"));
+                if ($dbConnection->connect_errno) {
+                    printf("DB connection failed: %s\n", $dbConnection->connect_error);
+                    exit();
+                }
+
+                $result = $dbConnection->query($statement);
+                $row = $result->fetch_assoc();
+
+                if ($row != NULL) {
+                    $f3->set("studentid", $row['studentid']);
+                    $f3->set("firstname", $row['firstname']);
+                    $f3->set("lastname", $row['lastname']);
+                    $f3->set("studentemail", $row['email']);
+                    $f3->set("studentphone", $row['phone']);
+                    $f3->set("internshiptitle", $row['internshiptitle']);
+                    $f3->set("company", $row['company']);
+                    $f3->set("startdate", $row['startdate']);
+                    $f3->set("enddate", $row['enddate']);
+                    $f3->set("hoursworked", $row['hoursworked']);
+                    $f3->set("supervisorname", $row['supervisorname']);
+                    $f3->set("supervisortitle", $row['supervisortitle']);
+                    $f3->set("supervisoremail", $row['supervisoremail']);
+                    $f3->set("supervisorphone", $row['supervisorphone']);
+                    $f3->set("dutiesdescription", $row['descriptionofduties']);
+                    $f3->set("reflection0", $row['reflection0']);
+                    $f3->set("reflection1", $row['reflection1']);
+                    $f3->set("reflection2", $row['reflection2']);
+                    $f3->set("reflection3", $row['reflection3']);
+                    $f3->set("reflection4", $row['reflection4']);
+
+                    echo View::instance()->render('views/approval_form.php');
+                    //TODO: switch to using Template::instance() and {{ }} notation
+                }
+
+                // if record found, show form with filled fields
+                // else show
+
+                // if role = intructor, show approve button
+                // if ($params['role'] === "instructor") ...
             }
 
-            $result = $dbConnection->query($statement);
-            $row = $result->fetch_assoc();
-
-            if ($row != NULL) {
-                $f3->set("studentid", $row['studentid']);
-                $f3->set("firstname", $row['firstname']);
-                $f3->set("lastname", $row['lastname']);
-                $f3->set("studentemail", $row['email']);
-                $f3->set("studentphone", $row['phone']);
-                $f3->set("internshiptitle", $row['internshiptitle']);
-                $f3->set("company", $row['company']);
-                $f3->set("startdate", $row['startdate']);
-                $f3->set("enddate", $row['enddate']);
-                $f3->set("hoursworked", $row['hoursworked']);
-                $f3->set("supervisorname", $row['supervisorname']);
-                $f3->set("supervisortitle", $row['supervisortitle']);
-                $f3->set("supervisoremail", $row['supervisoremail']);
-                $f3->set("supervisorphone", $row['supervisorphone']);
-                $f3->set("dutiesdescription", $row['descriptionofduties']);
-                $f3->set("reflection0", $row['reflection0']);
-                $f3->set("reflection1", $row['reflection1']);
-                $f3->set("reflection2", $row['reflection2']);
-                $f3->set("reflection3", $row['reflection3']);
-                $f3->set("reflection4", $row['reflection4']);
-
-                echo View::instance()->render('views/approval_form.php');
-            }
-
-            // if record found, show form with filled fields
-            // else show
-
-            // if role = intructor, show approve button
-            // if ($params['role'] === "instructor") ...
+            //$f3->clear('entryId');
+        } else {
+            echo "Authentication failed!";
         }
+    }
+);
+
+$f3->route('GET /entries/@id',
+    function($f3) {
+        $f3->set('entryId', $f3->get('PARAMS.id'));
+//        echo 'Please enter your credentials to view entry # ' . $f3->get('PARAMS.id'); ln();
+        echo View::instance()->render('views/auth.php');
     }
 );
 
