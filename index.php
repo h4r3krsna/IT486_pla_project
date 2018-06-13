@@ -1,6 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
+use \setasign\Fpdi;
 
 function ln() {
     echo '<br>';
@@ -100,6 +101,29 @@ function isValidForm(&$postData) {
   $isValidForm = isFilled($postData, 'reflection4') && $isValidForm;
 
   return $isValidForm;
+}
+
+function tryfpdf() {
+    $pdf = new FPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('Arial','B',16);
+    $pdf->Cell(40,10,'Hello World!');
+    $pdf->Output();
+}
+
+function tryfpdi() {
+    $pdf = new Fpdi\Fpdi();
+    $pages_count = $pdf->setSourceFile("assets/plaform_blank.pdf");
+    $tplIdx = $pdf->importPage(1);
+    $pdf->addPage();
+    $size = $pdf->useTemplate($tplIdx);
+    $pdf->SetFont('Arial');
+    $pdf->SetTextColor(0,0,0);
+    $pdf->SetXY(45,51);
+    $pdf->Write(0,"Hello World!");
+    $pdf->SetXY(140,51);
+    $pdf->Write(0, "123456789");
+    $pdf->Output();
 }
 
 $f3 = \Base::instance();
@@ -268,12 +292,8 @@ $f3->route('GET /entries/@id',
 );
 
 $f3->route('GET /tryfpdf', function() {
-    //echo View::instance()->render('views/tryfpdf.php');
-    $pdf = new FPDF();
-    $pdf->AddPage();
-    $pdf->SetFont('Arial','B',16);
-    $pdf->Cell(40,10,'Hello World!');
-    $pdf->Output();
+//    tryfpdf();
+    tryfpdi();
 });
 
 $f3->route('GET /foo', function() {
