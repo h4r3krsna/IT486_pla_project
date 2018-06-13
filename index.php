@@ -3,6 +3,19 @@
 require 'vendor/autoload.php';
 use \setasign\Fpdi;
 
+$f3 = \Base::instance();
+$f3->set('DEBUG', 5);
+
+// TODO: consider moving these to constants.php to call require_once here
+define("DOMAIN", "http://msreedaran.greenrivertech.net/plaform/");
+// TODO: define a collection of endpoints
+define('SELECT_QUERY','SELECT * FROM entries WHERE id=');
+
+// TODO: consider turning these into constants
+$f3->set("instructorEmail", "msreedaran@mail.greenriver.edu");
+$f3->set('entryViewURL', DOMAIN . 'entries/');
+$f3->set('approvalURL', DOMAIN . 'approve/');
+
 function ln() {
     echo '<br>';
 }
@@ -127,11 +140,67 @@ function tryfpdi() {
     $pdf->Output();
 }
 
-$f3 = \Base::instance();
+function generatePDF($f3) {
+    $pdf = new Fpdi\Fpdi();
+    $pages_count = $pdf->setSourceFile("assets/plaform_it378_blank.pdf");
 
-$f3->set('DEBUG', 5);
+    $formFields = json_decode(file_get_contents("assets/plaform_fields.json"));
+    //print_r($formFields);
 
-$f3->set("instructorEmail", "msreedaran@mail.greenriver.edu");
+    $tplIdx = $pdf->importPage(1);
+    $pdf->addPage();
+    $pdf->useTemplate($tplIdx);
+
+    $pdf->SetFont('Arial');
+    $pdf->SetTextColor(0,0,0);
+    $pdf->SetXY(45,51);
+    $pdf->Write(0,$f3->get('studentname'));
+    $pdf->SetXY(140,51);
+    $pdf->Write(0, $f3->get('studentid'));
+    $pdf->SetXY(40,63);
+    $pdf->Write(0, $f3->get('studentphone'));
+    $pdf->SetXY(105,63);
+    $pdf->Write(0, $f3->get('studentemail'));
+    $pdf->Output();
+
+    /*
+        for ($j = 0; $j < count($formFields->pages[0]->areas); $j++) {
+            $area = $formFields->pages[0]->areas[$j];
+            $x    = $area->x;
+            $y    = $area->y;
+            $w    = $area->width;
+            $h    = $area->height;
+
+            // Draw blue rect at bounds
+            $pdf->SetDrawColor(0, 0, 255);
+            $pdf->SetLineWidth(0.2835
+            $pdf->Rect($x, $y, $w, $h);
+
+    /*
+            $pdf->SetLineWidth(1.0); // border
+
+            $iw       = $w - 2 /* 2 x 1 \* ;
+            $v        = utf8_decode($area->name);
+            //echo 'v... ' . $v;
+            $v        = $f3->get($v);
+            //echo 'f3.get... ' . $v;
+            $overflow = ($pdf->GetStringWidth($v) > $iw);
+            while ($pdf->GetStringWidth($v) > $iw) {
+                $v = substr($v, 0, -1);
+            }
+            if ($overflow) {
+                $v = substr($v, 0, -1) . "\\";
+            }
+
+            $pdf->SetXY($x, $y);
+
+    //        $pdf->Write($w, $v);
+    //        $pdf->MultiCell($w, intval($h), $v, true);
+        }
+
+        //$pdf->Output("test-dhek.pdf", "F");*/
+    return $pdf;
+}
 
 $f3->route('GET /test/foo',
     function() {
@@ -235,7 +304,7 @@ $f3->route('POST /',
         if ($dbConnection->query($statement) === TRUE) {
             $entryID = $dbConnection->insert_id;
             $entryURL = "http://request.greenrivertech.net/entries/" . $entryID;
-            $messageToInstructor = "Visit http://request.greenrivertech.net/entries/" . $entryID . " to see the details of the form submission.";
+            $messageToInstructor = "Visit " . $f3->get('entryViewURL') . $entryID . " to see the details of the form submission.";
             mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $messageToInstructor);
 
             // To send HTML mail, the Content-type header must be set
@@ -274,7 +343,7 @@ $f3->route('POST /',
             $messageToStudent .= '<p><b>What did you learn in your internship experience, either directly at work or independently to support your work? Your answer may include technical and non-technical items.</b><br>' . $reflection1 . '</p>';
             $messageToStudent .= '<p><b>What was your experience with the work environment, company/management culture, and technical/innovation culture? Was it what you expected? And what would you look for in your next work opportunity that is either the same or different from this internship/work experience, from a technical or non-technical perspective?</b><br>' . $reflection2 . '</p>';
             $messageToStudent .= '<p><b>With your internship experience completed, what do you plan on learning going forward into your next courses and/or next work opportunities?</b><br>' . $reflection3 . '</p>';
-            $messageToStudent .= '<p><b>With your internship experience completed, what would your recommendations/advice be to students who are searching for their first internship and/or are preparing to start their first internship experience?</b><br>' . $reflection4 . '\r\n';
+            $messageToStudent .= '<p><b>With your internship experience completed, what would your recommendations/advice be to students who are searching for their first internship and/or are preparing to start their first internship experience?</b><br>' . $reflection4 . '</p>';
             $messageToStudent .= '</body></html>';
             mail($_POST['student-email'], $subject, $messageToStudent, implode("\r\n", $headers));
 
@@ -300,9 +369,11 @@ $f3->route('POST /entries/@id',
         // TODO: create authentication roles in a database table and look up a match
         if (!(strcmp($username, 'admin') || strcmp($password, 'nimdadrowssap'))) {
 
+            $f3->set('SESSION.authenticated', true);
+
             $entryId = $f3->get('PARAMS.id');
             if (intval($entryId) > 0) {
-                $statement = 'SELECT * FROM entries WHERE id=' . $entryId;
+                $statement = SELECT_QUERY . $entryId;
 
                 // TODO: make the credentials configurable outside of this block
                 $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
@@ -317,10 +388,12 @@ $f3->route('POST /entries/@id',
                 $result = $dbConnection->query($statement);
                 $row = $result->fetch_assoc();
 
+                // TODO: create a PHP native object to model the record
                 if ($row != NULL) {
                     $f3->set("studentid", $row['studentid']);
                     $f3->set("firstname", $row['firstname']);
                     $f3->set("lastname", $row['lastname']);
+                    $f3->set("studentname", $row['firstname'] . ' ' . $row['lastname']);
                     $f3->set("studentemail", $row['email']);
                     $f3->set("studentphone", $row['phone']);
                     $f3->set("internshiptitle", $row['internshiptitle']);
@@ -352,28 +425,97 @@ $f3->route('POST /entries/@id',
 
             //$f3->clear('entryId');
         } else {
-            echo "Authentication failed!";
+            echo View::instance()->render('views/top.php');
+            echo "<h1>Authentication failed!</h1>";
+            echo '<p><a onclick="window.history.back()">Go back</a></p>';
+            echo View::instance()->render('views/bottom.php');
         }
     }
 );
 
 $f3->route('GET /entries/@id',
     function($f3) {
+        $f3->set('SESSION.authenticated', false); // require authentication each time a form submission is opened
+        echo $f3->get('studentid'); ln();
+        echo $f3->get('firstname');
         $f3->set('entryId', $f3->get('PARAMS.id'));
 //        echo 'Please enter your credentials to view entry # ' . $f3->get('PARAMS.id'); ln();
         echo View::instance()->render('views/auth.php');
     }
 );
 
+$f3->route('GET /approve/@id',
+    function($f3) {
+        if ($f3->get('SESSION.authenticated')) {
+            // TODO: store the record's model object to the session in 'GET /entries/@id'; unset it when entering 'GET /entries/@id' and when leaving 'GET /approve/@id'
+
+            $entryId = $f3->get('PARAMS.id');
+            if (intval($entryId) > 0) {
+                $statement = SELECT_QUERY . $entryId;
+
+                // TODO: make the credentials configurable outside of this block
+                $dbConnection = new mysqli("localhost", //$this->f3->get("dbservername"),
+                    "request_plaform", //$this->f3->get("dbuser"),
+                    "plaform",//$this->f3->get("dbpassword"),
+                    "request_plaform");//$this->f3->get("databasename"));
+                if ($dbConnection->connect_errno) {
+                    printf("DB connection failed: %s\n", $dbConnection->connect_error);
+                    exit();
+                }
+
+                $result = $dbConnection->query($statement);
+                $row = $result->fetch_assoc();
+
+                // TODO: create a PHP native object to model the record
+                if ($row != NULL) {
+                    $f3->set("studentid", $row['studentid']);
+                    $f3->set("firstname", $row['firstname']);
+                    $f3->set("lastname", $row['lastname']);
+                    $f3->set("studentname", $row['firstname'] . ' ' . $row['lastname']);
+                    $f3->set("studentemail", $row['email']);
+                    $f3->set("studentphone", $row['phone']);
+                    $f3->set("internshiptitle", $row['internshiptitle']);
+                    $f3->set("company", $row['company']);
+                    $f3->set("startdate", $row['startdate']);
+                    $f3->set("enddate", $row['enddate']);
+                    $f3->set("hoursworked", $row['hoursworked']);
+                    $f3->set("supervisorname", $row['supervisorname']);
+                    $f3->set("supervisortitle", $row['supervisortitle']);
+                    $f3->set("supervisoremail", $row['supervisoremail']);
+                    $f3->set("supervisorphone", $row['supervisorphone']);
+                    $f3->set("dutiesdescription", $row['descriptionofduties']);
+                    $f3->set("reflection0", $row['reflection0']);
+                    $f3->set("reflection1", $row['reflection1']);
+                    $f3->set("reflection2", $row['reflection2']);
+                    $f3->set("reflection3", $row['reflection3']);
+                    $f3->set("reflection4", $row['reflection4']);
+
+//                    echo "Student ID: " . $f3->get('studentid'); ln();
+//                    echo "First Name: " . $f3->get('firstname');
+                    $pdf = generatePDF($f3);
+                    //$pdf->Output("test-dhek.pdf", "F");
+                }
+            }
+
+            $f3->set('SESSION.authenticated', false); // "log out" after generating PDF so new
+        } else {
+            echo 'Please <a href="' . $f3->get('entryViewURL') . $f3->get('PARAMS.id') . '">sign in</a> to view/approve this entry.';
+        }
+    }
+);
+
+// DEPRECATED
 $f3->route('GET /tryfpdf', function() {
 //    tryfpdf();
     tryfpdi();
 });
 
+// DEPRECATED
 $f3->route('GET /foo', function() {
    echo "foo";
 });
 
+// DEPRECATED
 $f3->route('GET /bar',
     function($f3, $params) {
         echo "bar";
