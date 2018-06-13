@@ -7,3 +7,4 @@ error_log
 *.bak
 composer.lock
 vendor/*
+views/trytemplate.php
