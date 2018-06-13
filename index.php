@@ -83,6 +83,7 @@ function isValidForm(&$postData) {
   $isValidForm = isFilled($postData, 'first-name') && $isValidForm;
   $isValidForm = isFilled($postData, 'last-name') && $isValidForm;
   $isValidForm = isValidEmail($postData, 'student-email') && $isValidForm;
+  $isValidForm = isValidPhone($postData, 'student-phone') && $isValidForm;
   $isValidForm = isFilled($postData, 'internship-title') && $isValidForm;
   $isValidForm = isFilled($postData, 'company') && $isValidForm;
   $isValidForm = isValidDate($postData, 'start-date') && $isValidForm;
@@ -176,6 +177,7 @@ $f3->route('POST /',
         $firstName = $dbConnection->escape_string($_POST["first-name"]);
         $lastName = $dbConnection->escape_string($_POST["last-name"]);
         $studentEmail = $dbConnection->escape_string($_POST["student-email"]);
+        $studentPhone = $dbConnection->escape_string($_POST["student-phone"]);
         $internshipTitle = $dbConnection->escape_string($_POST["internship-title"]);
         $company = $dbConnection->escape_string($_POST["company"]);
         $startDate = $dbConnection->escape_string($_POST["start-date"]);
@@ -192,7 +194,7 @@ $f3->route('POST /',
         $reflection3 = $dbConnection->escape_string($_POST["reflection3"]);
         $reflection4 = $dbConnection->escape_string($_POST["reflection4"]);
 
-        $statement = "INSERT INTO entries (studentid, firstname, lastname, email,"
+        $statement = "INSERT INTO entries (studentid, firstname, lastname, email, phone,"
                      . " internshiptitle, company, startdate,enddate,hoursworked,"
                      . "supervisorname,supervisortitle, supervisoremail,supervisorphone,"
                      . "descriptionofduties,"
@@ -202,6 +204,7 @@ $f3->route('POST /',
                      . "'" . $firstName . "',"
                      . "'" . $lastName . "',"
                      . "'" . $studentEmail . "', "
+                     . "'" . $studentPhone . "', "
                      . "'" . $internshipTitle . "', "
                      . "'" . $company . "', "
                      . "'" . $startDate . "', "
@@ -263,6 +266,7 @@ $f3->route('GET /entries/@id',
                 $f3->set("firstname", $row['firstname']);
                 $f3->set("lastname", $row['lastname']);
                 $f3->set("studentemail", $row['email']);
+                $f3->set("studentphone", $row['phone']);
                 $f3->set("internshiptitle", $row['internshiptitle']);
                 $f3->set("company", $row['company']);
                 $f3->set("startdate", $row['startdate']);

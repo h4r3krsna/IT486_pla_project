@@ -32,13 +32,15 @@
                     <fieldset>
                         <legend>Personal Identification</legend>
                         <label for="student-id">Student ID#:</label>
-                        <input type="numberr" class="form-control" id="student-id" name="student-id" placeholder="XXXXXXXXX" required>
+                        <input type="number" class="form-control" id="student-id" name="student-id" placeholder="XXXXXXXXX" required>
                         <label for="first-name">First Name:</label>
                         <input type="text" class="form-control" id="first-name" name="first-name" placeholder="" required">
                         <label for="last-name">Last Name:</label>
                         <input type="text" class="form-control" id="last-name" name="last-name" placeholder="" required>
                         <label for="student-email">Student Email:</label>
-                        <input type="emaill" class="form-control" id="student-email" name="student-email" placeholder="" required>
+                        <input type="email" class="form-control" id="student-email" name="student-email" placeholder="" required>
+                        <label for="student-phone">Student Phone:</label>
+                        <input type="text" class="form-control" id="student-phone" name="student-phone" placeholder="XXXXXXXXXX" required>
                     </fieldset>
                 </div>
             </div>
@@ -54,8 +56,8 @@
                         <input type="date" class="form-control" id="start-date" name="start-date" required>
                         <label for="end-date">End Date:</label>
                         <input type="date" class="form-control" id="end-date" name="end-date" required>
-                        <label for="hours-worked">Hours Worked:</label>
-                        <input type="numberr" class="form-control" id="hours-worked" name="hours-worked" placeholder="" required>
+                        <label for="hours-worked">Total Hours Worked:</label>
+                        <input type="number" class="form-control" id="hours-worked" name="hours-worked" placeholder="" required>
                     </fieldset>
                 </div>
             </div>
@@ -70,9 +72,9 @@
                         <label for="supervisor-title">Supervisor Title:</label>
                         <input type="text" class="form-control" id="supervisor-title" name="supervisor-title" placeholder="" required>
                         <label for="supervisor-email">Supervisor Email:</label>
-                        <input type="emaill" class="form-control" id="supervisor-email" name="supervisor-email" placeholder="" required>
+                        <input type="email" class="form-control" id="supervisor-email" name="supervisor-email" placeholder="" required>
                         <label for="supervisor-phone">Supervisor Phone:</label>
-                        <input type="numberr" class="form-control" id="supervisor-phone" name="supervisor-phone" placeholder="XXXXXXXXXX" required>
+                        <input type="number" class="form-control" id="supervisor-phone" name="supervisor-phone" placeholder="XXXXXXXXXX" required>
                     </fieldset>
                 </div>
             </div>
@@ -142,12 +144,15 @@
         return result;
     }
 
-    function isValidPhone(input) {
+    function isValidPhone(inputField) {
+        var input = inputField.val();
         var result = input.length == 10 && /\d{10}/.test(input);
 
         if (!result) {
             alert('Please ensure that phone number is a 10-digit numeric value!');
         }
+
+        inputField.focus();
 
         return result;
     }
@@ -163,12 +168,13 @@
         isValidForm = isValidForm
                       && isValidStudentID($('#student-id').val())
                       && isValidEmail($('#student-email').val())
+                      && isValidPhone($('#student-phone'))
                       && isValidDate($('#start-date').val())
                       && isValidDate($('#end-date').val())
                       && isStartDateBeforeEndDate($('#start-date').val(), $('#end-date').val())
                       && $.isNumeric($('#hours-worked').val())
                       && isValidEmail($('#supervisor-email').val())
-                      && isValidPhone($('#supervisor-phone').val());
+                      && isValidPhone($('#supervisor-phone'));
 
         return isValidForm;
     }

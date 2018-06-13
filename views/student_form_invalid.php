@@ -43,6 +43,8 @@
                         <input type="text" class="form-control <?php if(!$_POST['ok-last-name']) echo "errorField"; ?>" id="last-name" name="last-name" placeholder="" required value="<?php if($_POST['ok-last-name']) echo $_POST['last-name']; ?>">
                         <label for="student-email">Student Email:<span class="validationError"><?php if(!$_POST['ok-student-email']) echo "* (must be valid email)"; ?></span></label>
                         <input type="email" class="form-control <?php if(!$_POST['ok-student-email']) echo "errorField"; ?>" id="student-email" name="student-email" placeholder="" required value="<?php if($_POST['ok-student-email']) echo $_POST['student-email']; ?>">
+                        <label for="student-phone">Student Phone:<span class="validationError"><?php if (!$_POST['ok-student-phone']) echo "* (must be 10 digits)"; ?></span></label>
+                        <input type="text" class="form-control <?php if (!$_POST['ok-student-phone']) echo "errorField"; ?>" id="student-phone" name="student-phone" placeholder="XXXXXXXXXX" required value="<?php if($_POST['ok-student-phone']) echo $_POST['student-phone']; ?>">
                     </fieldset>
                 </div>
             </div>
@@ -58,7 +60,7 @@
                         <input type="date" class="form-control <?php if(!($_POST['ok-start-date'] && $_POST['ok-dates'])) echo "errorField"; ?>" id="start-date" name="start-date" required value="<?php if($_POST['ok-start-date'] && $_POST['ok-dates']) echo $_POST['start-date']; ?>">
                         <label for="end-date">End Date:<span class="validationError"><?php if(!$_POST['ok-end-date']) echo "*"; if(!$_POST['ok-dates']) echo " (must be on/after Start Date)"; ?></span></label>
                         <input type="date" class="form-control <?php if(!($_POST['ok-end-date'] && $_POST['ok-dates'])) echo "errorField"; ?>" id="end-date" name="end-date" required value="<?php if($_POST['ok-end-date'] && $_POST['ok-dates']) echo $_POST['end-date']; ?>">
-                        <label for="hours-worked">Hours Worked:<span class="validationError"><?php if(!$_POST['ok-hours-worked']) echo "* (must be a number)"; ?></span></label>
+                        <label for="hours-worked">Total Hours Worked:<span class="validationError"><?php if(!$_POST['ok-hours-worked']) echo "* (must be a number)"; ?></span></label>
                         <input type="number" class="form-control <?php if(!$_POST['ok-hours-worked']) echo "errorField"; ?>" id="hours-worked" name="hours-worked" placeholder="" required value="<?php if($_POST['ok-hours-worked']) echo $_POST['hours-worked']; ?>">
                     </fieldset>
                 </div>
@@ -168,12 +170,13 @@
         isValidForm = isValidForm
                       && isValidStudentID($('#student-id').val())
                       && isValidEmail($('#student-email').val())
+                      && isValidPhone($('#student-phone'))
                       && isValidDate($('#start-date').val())
                       && isValidDate($('#end-date').val())
                       && isStartDateBeforeEndDate($('#start-date').val(), $('#end-date').val())
                       && $.isNumeric($('#hours-worked').val())
                       && isValidEmail($('#supervisor-email').val())
-                      && isValidPhone($('#supervisor-phone').val());
+                      && isValidPhone($('#supervisor-phone'));
 
         return isValidForm;
     }

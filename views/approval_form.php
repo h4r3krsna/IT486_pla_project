@@ -38,6 +38,8 @@ $f3 = \Base::instance();
                         <input type="text" class="form-control" id="last-name" name="last-name" value="<?php echo $f3->get("lastname"); ?>" disabled>
                         <label for="student-email">Student Email:</label>
                         <input type="email" class="form-control" id="student-email" name="student-email" value="<?php echo $f3->get("studentemail"); ?>" disabled>
+                        <label for="student-phone">Student Phone:</label>
+                        <input type="text" class="form-control" id="student-phone" name="student-phone" value="<?php echo $f3->get("studentphone") ?>" disabled>
                     </fieldset>
                 </div>
             </div>
@@ -53,7 +55,7 @@ $f3 = \Base::instance();
                         <input type="date" class="form-control" id="start-date" name="start-date" value="<?php echo $f3->get("startdate"); ?>" disabled>
                         <label for="end-date">End Date:</label>
                         <input type="date" class="form-control" id="end-date" name="end-date" value="<?php echo $f3->get("enddate"); ?>" disabled>
-                        <label for="hours-worked">Hours Worked:</label>
+                        <label for="hours-worked">Total Hours Worked:</label>
                         <input type="number" class="form-control" id="hours-worked" name="hours-worked" value="<?php echo $f3->get("hoursworked"); ?>" disabled>
                     </fieldset>
                 </div>
