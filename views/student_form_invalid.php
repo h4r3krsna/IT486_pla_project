@@ -51,7 +51,6 @@
                         <label for="student-phone">Student Phone:<span class="validationError"><?php if (!$_POST['ok-student-phone']) echo "* (must be 10 digits)"; ?></span></label>
                         <input type="text" class="form-control <?php if (!$_POST['ok-student-phone']) echo "errorField"; ?>" id="student-phone" name="student-phone" placeholder="XXXXXXXXXX" required value="<?php if($_POST['ok-student-phone']) echo $_POST['student-phone']; ?>">
                     </div>
-            </div>
                 </fieldset>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
