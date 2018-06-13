@@ -303,8 +303,8 @@ $f3->route('POST /',
         $entryID = '';
         if ($dbConnection->query($statement) === TRUE) {
             $entryID = $dbConnection->insert_id;
-            $entryURL = "http://request.greenrivertech.net/entries/" . $entryID;
-            $messageToInstructor = "Visit " . $f3->get('entryViewURL') . $entryID . " to see the details of the form submission.";
+            $entryURL = $f3->get('entryViewURL') . $entryID;
+            $messageToInstructor = "Visit " . $entryURL . " to see the details of the form submission.";
             mail($f3->get("instructorEmail"), "New PLA Request Form Submission", $messageToInstructor);
 
             // To send HTML mail, the Content-type header must be set
@@ -313,7 +313,7 @@ $f3->route('POST /',
 
             // Additional headers
 //            $headers[] = 'To: ' . $firstName . ' ' . $lastName . ' <' . $studentEmail . '>';
-//            $headers[] = 'From: Green River P <noreply@greenrivertech.net>';
+//            $headers[] = 'From: Automated Sender <noreply@greenrivertech.net>';
             
             $subject = "Prior Learning Assessment Request Form Submission";
             
@@ -436,8 +436,6 @@ $f3->route('POST /entries/@id',
 $f3->route('GET /entries/@id',
     function($f3) {
         $f3->set('SESSION.authenticated', false); // require authentication each time a form submission is opened
-        echo $f3->get('studentid'); ln();
-        echo $f3->get('firstname');
         $f3->set('entryId', $f3->get('PARAMS.id'));
 //        echo 'Please enter your credentials to view entry # ' . $f3->get('PARAMS.id'); ln();
         echo View::instance()->render('views/auth.php');
